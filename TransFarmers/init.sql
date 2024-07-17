@@ -1,3 +1,3 @@
 CREATE DATABASE IF NOT EXISTS transfarmers_db;
-GRANT ALL PRIVILEGES ON transfarmers_db.* to 'eddi'@'%';
+GRANT ALL PRIVILEGES ON transfarmers_db.* TO 'eddi'@'%';
 FLUSH PRIVILEGES;

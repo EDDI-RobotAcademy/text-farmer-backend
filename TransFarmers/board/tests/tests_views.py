@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
-import board.service.board_service_impl
+
 from board.entity.models import Board
 from board.service.board_service_impl import BoardServiceImpl
 
