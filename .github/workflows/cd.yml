@@ -26,7 +26,7 @@ jobs:
           ${{ runner.os }}-pip-
 
     - name: Install Dependencies
-      working-directory: ./lms_project
+      working-directory: ./TransFarmers
       run: |
         if [ -f requirements.txt ]; then
           python -m venv .venv
@@ -62,13 +62,13 @@ jobs:
 
     - name: Build and Push Docker Image
       run: |
-        cd lms_project
-        docker buildx build --platform linux/arm64 -f Dockerfile -t ghcr.io/${{ github.actor }}/django-backend-server:latest --push .
+        cd TransFarmers
+        docker buildx build --platform linux/arm64 -f Dockerfile -t ghcr.io/${{ github.actor }}/text-farmer-django-backend-server:latest --push .
 
   deploy:
     needs: build
     name: Deploy
-    runs-on: [ self-hosted, deploy-lms-backend ]
+    runs-on: [ self-hosted, deploy-text-farmer-backend ]
     steps:
     - name: Login to GHCR
       uses: docker/login-action@v1
@@ -85,7 +85,7 @@ jobs:
         key: ${{ secrets.PRIVATE_KEY }}
         script_stop: true
         script: |
-            cd /home/ec2-user/lms/django-backend
+            cd /home/ec2-user/text-farmer/django-backend
             docker-compose down
 
             echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
