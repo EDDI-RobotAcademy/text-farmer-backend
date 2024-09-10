@@ -28,6 +28,9 @@ SECRET_KEY = "django-insecure-2k)mi55#xi-o#&gmt_6jcz5#0+$m=i=kf6h*j7v$n8vym^u5m=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+# ALLOWED_HOSTS = [http://localhost:8080,http://192.168.0.16:8080,http://127.0.0.1:8080,http://3.35.208.141:8080]
+
 # Application definition
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -36,9 +39,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'corsheaders',
+    "django_extensions",
+    "corsheaders",
     "rest_framework",
     "board",
+    "account",
 ]
 
 MIDDLEWARE = [
@@ -52,10 +57,40 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
+load_dotenv()
 
+KAKAO = {
+    "LOGIN_URL": os.getenv("KAKAO_LOGIN_URL"),
+    "CLIENT_ID": os.getenv("KAKAO_CLIENT_ID"),
+    "REDIRECT_URI": os.getenv("KAKAO_REDIRECT_URI"),
+    "TOKEN_REQUEST_URI": os.getenv("KAKAO_TOKEN_REQUEST_URI"),
+    "USERINFO_REQUEST_URI": os.getenv("KAKAO_USERINFO_REQUEST_URI"),
+}
+
+CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS'
+]
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 
 ROOT_URLCONF = "config.urls"
 
@@ -92,10 +127,24 @@ DATABASES = {
     }
 }
 
+REDIS_HOST = os.getenv('REDIS_HOST')
+REDIS_PORT = os.getenv('REDIS_PORT')
+REDIS_PASSWORD = os.getenv('REDIS_PASSWORD')
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': f'redis://{REDIS_HOST}:{REDIS_PORT}/0',  # Redis의 0번 DB를 사용합니다. 필요에 따라 DB 번호를 수정할 수 있습니다.
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'PASSWORD': REDIS_PASSWORD,  # Redis 비밀번호를 설정합니다.
+            'SOCKET_CONNECT_TIMEOUT': 5,  # Redis 서버와의 연결 시도 제한 시간을 설정합니다.
+        }
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",

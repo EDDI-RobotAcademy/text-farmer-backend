@@ -1,7 +1,7 @@
 version: "3"
 services:
   django:
-    container_name: django
+    container_name: transfarmers-django
     image: ghcr.io/${GITHUB_ACTOR}/tf-django-server:latest
     command: /app/wait-for-it.sh db:3306 -t 15 -- sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     restart: always
@@ -52,7 +52,7 @@ services:
 
   redis:
     image: redis:latest
-    container_name: redis-container
+    container_name: redis
     restart: always
     ports:
       - "6379:6379"
